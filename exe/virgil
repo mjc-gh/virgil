@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+if ENV["DEV"]
+  $: << File.expand_path("../lib", __dir__)
+  require "pry"
+end
+
+require "virgil"
+
+# TODO make sure log dir exists in pwd (find a better home for this)
+FileUtils.mkdir("log") unless Dir.exist?("log")
+
+Virgil::CLI.start(ARGV)
