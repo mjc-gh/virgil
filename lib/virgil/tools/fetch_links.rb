@@ -2,13 +2,13 @@
 
 module Virgil
   module Tools
-    class FetchMarkdown < RubyLLM::Tool
-      desc "Fetch the content of a URL as markdown"
+    class FetchLinks < RubyLLM::Tool
+      desc "Fetch links for a URL"
 
-      param :url, type: :string, desc: "URL to fetch", required: true
+      param :url, type: :string, required: true
 
       def execute(url:)
-        Virgil::Virgo.exec "markdown", url
+        Virgil::Virgo.exec "links", url
       rescue Virgil::Virgo::ExecError => e
         { error: e.result }
       rescue StandardError => e

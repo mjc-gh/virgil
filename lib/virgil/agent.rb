@@ -2,16 +2,14 @@
 
 module Virgil
   class Agent < RubyLLM::Agent
-    def initialize
-      @chat = RubyLLM.chat
-      @chat.with_instructions Prompt.load("initial")
-      @chat.with_tools(
-        Tools::FetchMarkdown
-      )
-    end
+    include ::Virgil::Tools
 
-    def explore(prompt)
-      @chat.ask(prompt)
+    instructions { Virgil::Prompt.load("initial") }
+
+    tools CustomSearch, FetchLinks, FetchMarkdown
+
+    def explore(user_prompt)
+      ask("Your goal is to: #{user_prompt}")
     end
   end
 end
