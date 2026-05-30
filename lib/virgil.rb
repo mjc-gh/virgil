@@ -2,6 +2,7 @@
 
 require "thor"
 require "ruby_llm"
+require "yaml"
 
 require_relative "virgil/cli"
 require_relative "virgil/prompt"
@@ -13,16 +14,49 @@ require_relative "virgil/virgo"
 require_relative "virgil/agent"
 
 module Virgil
-  class Error < StandardError; end
-end
+  Error = Class.new(StandardError)
+  MissingConfiguration = Class.new(Error)
+  InvalidConfiguration = Class.new(Error)
 
-# TODO: move this elsewhere?
-RubyLLM.configure do |config|
-  config.openrouter_api_key = ENV.fetch("OPENROUTER_API_KEY", nil)
-  config.default_model = "google/gemini-2.5-flash-lite"
+  def self.available_providers = %w[openrouter anthropic]
 
-  timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
+  def self.config_dir
+    @config_dir ||= File.join(ENV["XDG_CONFIG_HOME"] || File.join(Dir.home, ".config"), "virgil")
+  end
 
-  config.log_file = "log/session-#{timestamp}-#{rand(0..1e6).to_i}.log"
-  config.log_level = ENV.fetch("VIRGIL_LOG_LEVEL", "info").to_sym
+  def self.config_file
+    @config_file ||= File.join(config_dir, "config.yml")
+  end
+
+  def self.config
+    @config ||= YAML.safe_load_file(config_file, permitted_classes: [Symbol])
+  end
+
+  # Configure RubyLLM and other setup
+  def self.configure!(model:)
+    api_key = config[:api_key].to_s.strip
+    provider = config[:provider].to_s.strip
+    model = config[:model].to_s.strip if model.nil? || model.empty?
+
+    raise MissingConfiguration, "api_key is not defined in config.yml" if api_key.empty?
+    raise MissingConfiguration, "provider is not defined in config.yml" if provider.empty?
+    raise MissingConfiguration, "model is not defined in config.yml nor provided as an option" if model.empty?
+    raise InvalidConfiguration, "invalid provider in config.yml" unless available_providers.include?(provider)
+
+    log_level = (config[:debug] ? "debug" : "info").to_sym
+    timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
+
+    RubyLLM.configure do |c|
+      c.default_model = model
+      c.log_file = "log/session-#{timestamp}-#{rand(0..1e6).to_i}.log"
+      c.log_level = log_level
+
+      case provider
+      when "anthropic"
+        c.anthropic_api_key = api_key
+      when "openrouter"
+        c.openrouter_api_key = api_key
+      end
+    end
+  end
 end

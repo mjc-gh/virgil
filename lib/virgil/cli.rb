@@ -1,11 +1,35 @@
 # frozen_string_literal: true
 
+require "fileutils"
+
 module Virgil
   class CLI < Thor
     def self.exit_on_failure? = true
 
+    desc "setup", "Configure a provider and API key"
+    def setup
+      FileUtils.mkdir_p Virgil.config_dir
+
+      config = Virgil.load_config
+
+      provider = ask("Which provider?", default: config[:provider], limited_to: Virgil.available_providers)
+      model = ask("Default model?", default: config[:model])
+      model = nil if model.empty?
+
+      api_key = ask("API Key: ", default: config[:api_key], echo: false)
+      abort "API key is required!" if api_key.empty?
+
+      File.open Virgil.config_file, "w+" do |file|
+        file << { provider:, model:, api_key: }.to_yaml
+      end
+    end
+
+    option :debug, type: :boolean, default: false, aliases: :d
+    option :model, type: :string, aliases: :m
     desc "explore PROMPT", "Explore the web with Virgil using PROMPT"
     def explore(prompt)
+      Virgil.configure!(model: options[:model])
+
       agent = Agent.new
       agent.after_message do |message|
         case message.role
@@ -19,8 +43,12 @@ module Virgil
             puts "[virgil] #{tool_tally}"
           end
 
-          puts "[virgil] #{message.content}" unless message.content.empty?
+          if !message.content.nil? && !message.content.empty?
+            puts "[virgil] #{message.content}"
+          end
         end
+      rescue StandardError => e
+        binding.pry
       end
 
       agent.before_tool_call do |tool_call|

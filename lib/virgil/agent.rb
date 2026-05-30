@@ -9,7 +9,7 @@ module Virgil
     tools CustomSearch, FetchLinks, FetchMarkdown
 
     def explore(user_prompt)
-      ask("Your goal is to: #{user_prompt}")
+      ask("GOAL: #{user_prompt}")
     end
   end
 end

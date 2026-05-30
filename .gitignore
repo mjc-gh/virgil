@@ -8,4 +8,5 @@
 /tmp/
 /log/
 
+virgil-*.gem
 .env.sh
