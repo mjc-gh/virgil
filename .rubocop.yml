@@ -5,6 +5,15 @@ plugins:
 AllCops:
   NewCops: enable
 
+Metrics/AbcSize:
+  Max: 32
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/EmptyClassDefinition:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 

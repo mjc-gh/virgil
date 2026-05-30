@@ -3,6 +3,7 @@
 require "fileutils"
 
 module Virgil
+  # rubocop:disable Metrics
   class CLI < Thor
     def self.exit_on_failure? = true
 
@@ -10,7 +11,7 @@ module Virgil
     def setup
       FileUtils.mkdir_p Virgil.config_dir
 
-      config = Virgil.load_config
+      config = Virgil.config
 
       provider = ask("Which provider?", default: config[:provider], limited_to: Virgil.available_providers)
       model = ask("Default model?", default: config[:model])
@@ -28,7 +29,7 @@ module Virgil
     option :model, type: :string, aliases: :m
     desc "explore PROMPT", "Explore the web with Virgil using PROMPT"
     def explore(prompt)
-      Virgil.configure!(model: options[:model])
+      Virgil.configure!(debug: options[:debug], model: options[:model])
 
       agent = Agent.new
       agent.after_message do |message|
@@ -43,9 +44,7 @@ module Virgil
             puts "[virgil] #{tool_tally}"
           end
 
-          if !message.content.nil? && !message.content.empty?
-            puts "[virgil] #{message.content}"
-          end
+          puts "[virgil] #{message.content}" if !message.content.nil? && !message.content.empty?
         end
       rescue StandardError => e
         binding.pry
@@ -58,4 +57,5 @@ module Virgil
       agent.explore prompt
     end
   end
+  # rubocop:enable Metrics
 end
