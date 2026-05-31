@@ -28,8 +28,10 @@ module Virgil
     option :debug, type: :boolean, default: false, aliases: :d
     option :model, type: :string, aliases: :m
     desc "explore PROMPT", "Explore the web with Virgil using PROMPT"
-    def explore(prompt)
+    def explore(prompt = nil)
       Virgil.configure!(debug: options[:debug], model: options[:model])
+
+      prompt = ask("What are we researching today?") if prompt.nil?
 
       agent = Agent.new
       agent.after_message do |message|
@@ -44,7 +46,15 @@ module Virgil
             puts "[virgil] #{tool_tally}"
           end
 
-          puts "[virgil] #{message.content}" if !message.content.nil? && !message.content.empty?
+          content = message.content
+
+          next if content.nil? || content.empty?
+
+          if content.include?("__GOAL_COMPLETED__")
+            puts "[virgil] * #{content.gsub('__GOAL_COMPLETED__', '')}"
+          else
+            puts "[virgil] #{content}"
+          end
         end
       rescue StandardError => e
         binding.pry
@@ -54,7 +64,9 @@ module Virgil
         puts "[#{tool_call.name}] called with #{tool_call.arguments.inspect}"
       end
 
-      agent.explore prompt
+      agent.explore(prompt) do |runs, max_runs|
+        puts "[virgil] goal not met (#{runs} of #{max_runs})"
+      end
     end
   end
   # rubocop:enable Metrics
