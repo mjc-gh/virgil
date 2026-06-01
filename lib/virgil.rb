@@ -30,6 +30,8 @@ module Virgil
     end
 
     def config
+      return {} unless File.exist?(config_file)
+
       @config ||= YAML.safe_load_file(config_file, permitted_classes: [Symbol])
     end
 
