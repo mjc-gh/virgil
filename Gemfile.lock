@@ -2,7 +2,9 @@ PATH
   remote: .
   specs:
     virgil (0.1.0)
+      bubbles (~> 0.1)
       bubbletea (~> 0.1)
+      bubblezone (~> 0.1)
       lipgloss (~> 0.2)
       ougai (~> 2.0)
       ruby_llm (~> 1.5)
@@ -14,10 +16,16 @@ GEM
     ast (2.4.3)
     base64 (0.3.0)
     bigdecimal (4.1.2)
+    bubbles (0.1.1)
+      bubbletea
+      harmonica
+      lipgloss
     bubbletea (0.1.4)
       lipgloss (~> 0.1)
     bubbletea (0.1.4-x86_64-linux-gnu)
       lipgloss (~> 0.1)
+    bubblezone (0.1.2)
+    bubblezone (0.1.2-x86_64-linux-gnu)
     coderay (1.1.3)
     date (3.5.1)
     erb (6.0.4)
@@ -53,6 +61,7 @@ GEM
     guard-rubocop (1.5.0)
       guard (~> 2.0)
       rubocop (< 2.0)
+    harmonica (0.1.1)
     io-console (0.8.2)
     irb (1.18.0)
       pp (>= 0.6.0)
@@ -177,8 +186,11 @@ CHECKSUMS
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bigdecimal (4.1.2) sha256=53d217666027eab4280346fba98e7d5b66baaae1b9c3c1c0ffe89d48188a3fbd
+  bubbles (0.1.1) sha256=ac16a9adef1cd4d51d7246ea6cda1a745a56321cc21a49e150e7446d62797d05
   bubbletea (0.1.4) sha256=33c3ea5eb7ab03160b942a9a8062ba04d0af2245a0b6b7457853ac4bd3218f69
   bubbletea (0.1.4-x86_64-linux-gnu) sha256=c1a06df5828c3af8ed664bf08591eba4bcb16aa44c58f8d21f7e2a01c2dea885
+  bubblezone (0.1.2) sha256=b6ddd6807caafb89e49bfdeea49ffc0276261e1599624037115b8f701417f67c
+  bubblezone (0.1.2-x86_64-linux-gnu) sha256=b3ba8547f794397587cbdefe3638d354030a8736f074f3a2061caeed560fe0c7
   coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
   date (3.5.1) sha256=750d06384d7b9c15d562c76291407d89e368dda4d4fff957eb94962d325a0dc0
   erb (6.0.4) sha256=38e3803694be357fe2bfe312487c74beaf9fb4e5beb3e22498952fe1645b95d9
@@ -194,6 +206,7 @@ CHECKSUMS
   guard-compat (1.2.1) sha256=3ad21ab0070107f92edfd82610b5cdc2fb8e368851e72362ada9703443d646fe
   guard-minitest (3.0.0) sha256=0c418e62a4081a429e4e66ad094a3b66f113423542b43ad7b2df0c87f19d5728
   guard-rubocop (1.5.0) sha256=3041d796dcb5ee31e352de74732250826f5f235b4ff48df9dbf424a6dc736251
+  harmonica (0.1.1) sha256=587da9bc55ffb6387c0ffb9243bb3b03d57d1ebaf29a17282d3912a3443f397a
   io-console (0.8.2) sha256=d6e3ae7a7cc7574f4b8893b4fca2162e57a825b223a177b7afa236c5ef9814cc
   irb (1.18.0) sha256=de9454a0703a54704b9811a5ef31a60c86949fbf4013fcf244fabc7c775248e3
   json (2.19.5) sha256=218a18553e4801d579ca7e0f5bc72bafd776d7397238a1fb4e74db5b0a812c59
