@@ -6,6 +6,7 @@ if ENV["DEV"]
   require "pry"
 end
 
+require "fileutils"
 require "virgil"
 
 # TODO: make sure log dir exists in pwd (find a better home for this)

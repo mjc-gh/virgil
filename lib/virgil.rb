@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "ougai"
 require "thor"
 require "ruby_llm"
 require "yaml"
@@ -36,7 +37,7 @@ module Virgil
     end
 
     # Configure RubyLLM and other setup
-    def configure!(model:, debug: false)
+    def configure!(model:)
       api_key = config[:api_key].to_s.strip
       provider = config[:provider].to_s.strip
       model = config[:model].to_s.strip if model.nil? || model.empty?
@@ -46,18 +47,24 @@ module Virgil
       raise MissingConfiguration, "model is not defined in config.yml nor provided as an option" if model.empty?
       raise InvalidConfiguration, "invalid provider in config.yml" unless available_providers.include?(provider)
 
-      configure_ruby_llm!(api_key:, debug:, model:, provider:)
+      configure_ruby_llm!(api_key:, model:, provider:)
+    end
+
+    def logger
+      @logger ||= begin
+        ts = Time.now.strftime("%Y%m%d_%H%M%S")
+        path = "log/session-#{ts}-#{rand(0..1e6).to_i}.log"
+
+        Ougai::Logger.new(File.open(path, "w+"))
+      end
     end
 
     private
 
-    def configure_ruby_llm!(api_key:, debug:, model:, provider:)
-      timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
-
+    def configure_ruby_llm!(api_key:, model:, provider:)
       RubyLLM.configure do |c|
         c.default_model = model
-        c.log_file = "log/session-#{timestamp}-#{rand(0..1e6).to_i}.log"
-        c.log_level = (debug ? "debug" : "info").to_sym
+        c.logger = Virgil.logger
 
         case provider
         when "anthropic"

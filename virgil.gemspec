@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "ruby_llm", "~> 1.5"
+  spec.add_dependency "ougai", "~> 2.0"
   spec.add_dependency "thor", "~> 1.5"
 
   # For more information and examples about making a new gem, check out our

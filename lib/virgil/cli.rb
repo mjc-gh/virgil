@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "fileutils"
-
 module Virgil
   # rubocop:disable Metrics
   class CLI < Thor
@@ -29,7 +27,8 @@ module Virgil
     option :model, type: :string, aliases: :m
     desc "explore PROMPT", "Explore the web with Virgil using PROMPT"
     def explore(prompt = nil)
-      Virgil.configure!(debug: options[:debug], model: options[:model])
+      Virgil.logger.level = :debug if options[:debug]
+      Virgil.configure! model: options[:model]
 
       prompt = ask("What are we researching today?") if prompt.nil?
 
