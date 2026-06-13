@@ -5,11 +5,21 @@ require "thor"
 require "ruby_llm"
 require "yaml"
 
+begin
+  require "bubbletea"
+  require "bubbles"
+  require "lipgloss"
+  TUI_AVAILABLE = true
+rescue LoadError
+  TUI_AVAILABLE = false
+end
+
 require_relative "virgil/cli"
 require_relative "virgil/prompt"
 require_relative "virgil/tools"
 require_relative "virgil/version"
 require_relative "virgil/virgo"
+require_relative "virgil/tui" if TUI_AVAILABLE
 
 # Always required last
 require_relative "virgil/agent"

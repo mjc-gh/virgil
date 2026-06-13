@@ -79,3 +79,7 @@ Virgil is a Ruby gem that wraps [RubyLLM](https://rubyllm.com/agents/) agents to
 ## Testing
 - **Test suite:** `test/test_*.rb` files
 - **Test helper:** `test/test_helper.rb` – adds custom `test()` DSL sugar and loads the gem
+
+## TUI Development
+
+For information about developing and understanding the Terminal User Interface built with Bubbletea Ruby, see [docs/TUI.md](docs/TUI.md). This covers the MVU pattern, message handling, styling, threading considerations, and common pitfalls.

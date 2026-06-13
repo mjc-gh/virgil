@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Virgil
-  # rubocop:disable Metrics
   class CLI < Thor
     def self.exit_on_failure? = true
 
@@ -30,43 +29,13 @@ module Virgil
       Virgil.logger.level = :debug if options[:debug]
       Virgil.configure! model: options[:model]
 
-      prompt = ask("What are we researching today?") if prompt.nil?
+      app = TUI::App.new(initial_prompt: prompt)
 
-      agent = Agent.new
-      agent.after_message do |message|
-        case message.role
-        when :tool
-          puts "[tool] #{message.tool_call_id[20..]} (content size: #{message.content.size})"
-
-        when :assistant
-          if !message.tool_calls.nil? && message.tool_calls.any?
-            tool_tally = message.tool_calls.values.map(&:name).tally
-
-            puts "[virgil] #{tool_tally}"
-          end
-
-          content = message.content
-
-          next if content.nil? || content.empty?
-
-          if content.include?("__GOAL_COMPLETED__")
-            puts "[virgil] * #{content.gsub('__GOAL_COMPLETED__', '')}"
-          else
-            puts "[virgil] #{content}"
-          end
-        end
-      rescue StandardError => e
-        binding.pry
-      end
-
-      agent.before_tool_call do |tool_call|
-        puts "[#{tool_call.name}] called with #{tool_call.arguments.inspect}"
-      end
-
-      agent.explore(prompt) do |runs, max_runs|
-        puts "[virgil] goal not met (#{runs} of #{max_runs})"
-      end
+      Bubbletea.run(
+        app,
+        alt_screen: true,
+        mouse_cell_motion: true
+      )
     end
   end
-  # rubocop:enable Metrics
 end
