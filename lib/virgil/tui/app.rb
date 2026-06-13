@@ -15,6 +15,7 @@ module Virgil
         @height = height
         @current_screen = :prompt
         @initial_prompt = initial_prompt
+        @last_prompt = nil
         @prompt_screen = Screens::Prompt.new(width:, height:)
         @research_screen = Screens::Research.new(width:, height:)
         @agent_thread = nil
@@ -30,6 +31,8 @@ module Virgil
         when SubmitPromptMessage
           @current_screen = :research
           @polling_active = true
+          @last_prompt = message.prompt
+          @research_screen = Screens::Research.new(width: @width, height: @height, prompt: @last_prompt)
           start_agent_research(message.prompt)
           # Start the queue polling loop
           return [self, Bubbletea.tick(0.1) { QueuePollMessage.new }]
@@ -48,7 +51,7 @@ module Virgil
           cmd = @polling_active ? Bubbletea.tick(0.1) { QueuePollMessage.new } : nil
           return [self, cmd]
         else
-          model, cmd = delegate_to_screen(message)
+          _model, cmd = delegate_to_screen(message)
           return [self, cmd] if cmd
         end
 
@@ -70,7 +73,7 @@ module Virgil
         @width = message.width
         @height = message.height
         @prompt_screen = Screens::Prompt.new(width: @width, height: @height)
-        @research_screen = Screens::Research.new(width: @width, height: @height)
+        @research_screen = Screens::Research.new(width: @width, height: @height, prompt: @last_prompt)
       end
 
       def handle_agent_response(message)

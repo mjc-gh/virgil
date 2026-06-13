@@ -14,7 +14,7 @@ module Virgil
           super(id:, header:, content:, expanded: true)
         end
 
-        def render_expanded
+        def render_expanded(focused: false)
           icon = @is_goal_completed ? "✓" : "💬"
           header_text = @is_goal_completed ? "Goal Completed" : "Agent Response"
           style = @is_goal_completed ? Styles.success : Styles.info
@@ -24,10 +24,10 @@ module Virgil
           content_view = Styles.card_expanded.render(content_lines.join("\n"))
 
           card_content = "#{header_view}\n#{content_view}"
-          Styles.card_border.render(card_content)
+          border_style(focused).render(card_content)
         end
 
-        def render_collapsed
+        def render_collapsed(focused: false)
           icon = @is_goal_completed ? "✓" : "💬"
           header_text = @is_goal_completed ? "Goal Completed" : "Agent Response"
           style = @is_goal_completed ? Styles.success : Styles.info
@@ -39,7 +39,7 @@ module Virgil
           content_view = Styles.card_collapsed.render(summary || "(no content)")
 
           card_content = "#{header_view}\n#{content_view}"
-          Styles.card_border.render(card_content)
+          border_style(focused).render(card_content)
         end
       end
       # rubocop:enable Metrics

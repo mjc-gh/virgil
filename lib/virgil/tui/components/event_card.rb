@@ -23,17 +23,21 @@ module Virgil
           self
         end
 
-        def view
+        def view(focused: false)
           if @expanded
-            render_expanded
+            render_expanded(focused:)
           else
-            render_collapsed
+            render_collapsed(focused:)
           end
         end
 
         private
 
-        def render_collapsed
+        def border_style(focused)
+          focused ? Styles.card_border_focused : Styles.card_border
+        end
+
+        def render_collapsed(focused: false)
           summary = @content.is_a?(String) ? @content.split("\n").first&.slice(0, 60) : @content.to_s.slice(0, 60)
           summary = "#{summary}..." if summary && summary.length >= 60
 
@@ -41,16 +45,16 @@ module Virgil
           content_view = Styles.card_collapsed.render(summary || "(no content)")
 
           card_content = "#{header_view}\n#{content_view}"
-          Styles.card_border.render(card_content)
+          border_style(focused).render(card_content)
         end
 
-        def render_expanded
+        def render_expanded(focused: false)
           header_view = Styles.card_title.render("▼ #{@header}")
           content_lines = @content.is_a?(String) ? @content.split("\n") : [@content.to_s]
           content_view = Styles.card_expanded.render(content_lines.join("\n"))
 
           card_content = "#{header_view}\n#{content_view}"
-          Styles.card_border.render(card_content)
+          border_style(focused).render(card_content)
         end
       end
     end

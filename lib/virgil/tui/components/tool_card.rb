@@ -44,7 +44,7 @@ module Virgil
           end
         end
 
-        def render_expanded
+        def render_expanded(focused: false)
           header_view = Styles.card_title.render("▼ #{@header}")
 
           args_section = "Arguments:\n#{@content}"
@@ -58,10 +58,10 @@ module Virgil
           content_view = Styles.card_expanded.render(full_content)
 
           card_content = "#{header_view}\n#{content_view}"
-          Styles.card_border.render(card_content)
+          border_style(focused).render(card_content)
         end
 
-        def render_collapsed
+        def render_collapsed(focused: false)
           header_view = Styles.card_title.render("▶ #{@header}")
           summary = @content.split("\n").first&.slice(0, 60)
           summary = "#{summary}..." if summary && summary.length >= 60
@@ -69,7 +69,7 @@ module Virgil
           content_view = Styles.card_collapsed.render(summary || "(no content)")
 
           card_content = "#{header_view}\n#{content_view}"
-          Styles.card_border.render(card_content)
+          border_style(focused).render(card_content)
         end
       end
     end

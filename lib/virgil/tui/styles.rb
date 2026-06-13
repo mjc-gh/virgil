@@ -18,6 +18,13 @@ module Virgil
                        .padding(1)
       end
 
+      def self.card_border_focused
+        Lipgloss::Style.new
+                       .border_style("rounded")
+                       .border_foreground("#00D7FF")
+                       .padding(1)
+      end
+
       def self.card_title
         Lipgloss::Style.new
                        .foreground("#00D7FF")
