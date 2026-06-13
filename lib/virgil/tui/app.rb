@@ -96,9 +96,13 @@ module Virgil
       def process_queued_message(msg)
         case msg
         when ToolCallMessage
-          @research_screen.add_tool_call(tool_name: msg.tool_name, arguments: msg.arguments)
+          @research_screen.add_tool_call(
+            tool_call_id: msg.tool_call_id,
+            tool_name: msg.tool_name,
+            arguments: msg.arguments
+          )
         when ToolResultMessage
-          @research_screen.update_tool_result(content: msg.content)
+          @research_screen.update_tool_result(tool_call_id: msg.tool_call_id, content: msg.content)
         when AgentResponseMessage
           handle_agent_response(msg)
         when ProgressMessage
@@ -125,12 +129,20 @@ module Virgil
 
       def setup_agent_callbacks(agent)
         agent.after_message do |message|
+          Virgil.logger.debug message: "after_message", **message.to_h
+
           send_tool_result(message) if message.role == :tool
           send_assistant_messages(message) if message.role == :assistant
         end
 
         agent.before_tool_call do |tool_call|
-          @message_queue.push(ToolCallMessage.new(tool_name: tool_call.name, arguments: tool_call.arguments))
+          Virgil.logger.debug message: "before_tool_call", **tool_call.to_h
+
+          @message_queue.push(ToolCallMessage.new(
+                                tool_call_id: tool_call.id,
+                                tool_name: tool_call.name,
+                                arguments: tool_call.arguments
+                              ))
         end
       end
 
@@ -147,7 +159,11 @@ module Virgil
 
       def send_tool_calls(tool_calls)
         tool_calls.each_value do |tool_call|
-          @message_queue.push(ToolCallMessage.new(tool_name: tool_call.name, arguments: tool_call.arguments))
+          @message_queue.push(ToolCallMessage.new(
+                                tool_call_id: tool_call.id,
+                                tool_name: tool_call.name,
+                                arguments: tool_call.arguments
+                              ))
         end
       end
     end

@@ -3,9 +3,10 @@
 module Virgil
   module TUI
     class ToolCallMessage
-      attr_reader :tool_name, :arguments
+      attr_reader :tool_call_id, :tool_name, :arguments
 
-      def initialize(tool_name:, arguments:)
+      def initialize(tool_call_id:, tool_name:, arguments:)
+        @tool_call_id = tool_call_id
         @tool_name = tool_name
         @arguments = arguments
       end

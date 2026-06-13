@@ -22,10 +22,11 @@ class TUIScreensTest < Minitest::Test
   def test_research_screen_add_tool_call
     screen = Virgil::TUI::Screens::Research.new
 
-    screen.add_tool_call(tool_name: "CustomSearch", arguments: { query: "test" })
+    screen.add_tool_call(tool_call_id: "call_abc123", tool_name: "CustomSearch", arguments: { query: "test" })
 
     assert_equal 1, screen.cards.length
     assert_instance_of Virgil::TUI::Components::ToolCard, screen.cards[0]
+    assert_equal "call_abc123", screen.cards[0].tool_call_id
   end
 
   def test_research_screen_add_agent_response

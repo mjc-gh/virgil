@@ -39,6 +39,7 @@ class TUIComponentsTest < Minitest::Test
   def test_tool_card_creation
     card = Virgil::TUI::Components::ToolCard.new(
       id: 1,
+      tool_call_id: "call_abc123",
       tool_name: "FetchMarkdown",
       arguments: { url: "https://example.com" }
     )
@@ -46,6 +47,17 @@ class TUIComponentsTest < Minitest::Test
     assert_equal "FetchMarkdown", card.tool_name
     assert_equal({ url: "https://example.com" }, card.arguments)
     assert_nil card.result
+  end
+
+  def test_tool_card_stores_tool_call_id
+    card = Virgil::TUI::Components::ToolCard.new(
+      id: 1,
+      tool_call_id: "call_abc123",
+      tool_name: "FetchMarkdown",
+      arguments: {}
+    )
+
+    assert_equal "call_abc123", card.tool_call_id
   end
 
   def test_response_card_creation

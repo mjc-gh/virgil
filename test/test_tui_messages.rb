@@ -5,11 +5,13 @@ require_relative "test_helper"
 class TUIMessagesTest < Minitest::Test
   def test_tool_call_message
     msg = Virgil::TUI::ToolCallMessage.new(
+      tool_call_id: "call_abc123",
       tool_name: "FetchMarkdown",
       arguments: { url: "https://example.com" }
     )
 
     assert_equal "FetchMarkdown", msg.tool_name
+    assert_equal "call_abc123", msg.tool_call_id
   end
 
   def test_progress_message

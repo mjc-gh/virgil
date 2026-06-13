@@ -4,9 +4,10 @@ module Virgil
   module TUI
     module Components
       class ToolCard < EventCard
-        attr_reader :tool_name, :arguments, :result
+        attr_reader :tool_call_id, :tool_name, :arguments, :result
 
-        def initialize(id:, tool_name:, arguments:, result: nil)
+        def initialize(id:, tool_call_id:, tool_name:, arguments:, result: nil)
+          @tool_call_id = tool_call_id
           @tool_name = tool_name
           @arguments = arguments
           @result = result

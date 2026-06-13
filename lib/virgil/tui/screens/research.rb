@@ -23,32 +23,28 @@ module Virgil
           @viewport = Bubbles::Viewport.new
           @viewport.width = width
           @viewport.height = [height - CHROME_LINES, 1].max
-          @tool_call_map = {}
+          @tool_call_id_map = {}
 
           add_prompt_card(prompt) if prompt
         end
 
-        def add_tool_call(tool_name:, arguments:)
+        def add_tool_call(tool_call_id:, tool_name:, arguments:)
           card_id = @card_id_counter
           @card_id_counter += 1
           card = Components::ToolCard.new(
             id: card_id,
+            tool_call_id:,
             tool_name:,
             arguments:
           )
           @cards << card
-          @tool_call_map[tool_name] = card_id
+          @tool_call_id_map[tool_call_id] = card
           self
         end
 
-        def update_tool_result(content:)
-          # Find the most recent tool card with matching name pattern
-          @cards.reverse_each do |card|
-            if card.is_a?(Components::ToolCard) && card.result.nil?
-              card.update_result(content)
-              break
-            end
-          end
+        def update_tool_result(tool_call_id:, content:)
+          card = @tool_call_id_map[tool_call_id]
+          card&.update_result(content)
           self
         end
 
