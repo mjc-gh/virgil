@@ -25,6 +25,7 @@ module Virgil
 
     option :debug, type: :boolean, default: false, aliases: :d
     option :model, type: :string, aliases: :m
+    option :output, type: :string, aliases: :o
     desc "explore PROMPT", "Explore the web with Virgil using PROMPT"
     def explore(prompt = nil)
       Virgil.logger.level = :debug if options[:debug]
@@ -33,6 +34,7 @@ module Virgil
       prompt = ask("What are we researching today?") if prompt.nil?
 
       agent = Agent.new
+      final_result = nil
       agent.after_message do |message|
         case message.role
         when :tool
@@ -48,6 +50,8 @@ module Virgil
           content = message.content
 
           next if content.nil? || content.empty?
+
+          final_result = content.gsub("__GOAL_COMPLETED__", "")
 
           if content.include?("__GOAL_COMPLETED__")
             puts "[virgil] * #{content.gsub('__GOAL_COMPLETED__', '')}"
@@ -66,6 +70,8 @@ module Virgil
       agent.explore(prompt) do |runs, max_runs|
         puts "[virgil] goal not met (#{runs} of #{max_runs})"
       end
+
+      File.write(options[:output], final_result) if options[:output]
     end
   end
   # rubocop:enable Metrics
